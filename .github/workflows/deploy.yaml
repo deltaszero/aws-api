@@ -18,20 +18,14 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install dependencies for layer
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt -t reqs/
-
-      - name: Zip Lambda layer
-        run: |
-          cd reqs
-          zip -r ../reqs.zip .
-          cd ..
+          pip install -r requirements.txt
 
       - name: Zip Lambda function
         run: |
-          zip -r lambda_function.zip app lambda_function.py
+          zip -r lambda_function.zip lambda_function.py
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -40,23 +34,10 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: sa-east-1
 
-      - name: Upload Lambda layer to S3
-        run: |
-          aws s3 cp reqs.zip s3://${{ secrets.S3_BUCKET }}/reqs.zip
-
-      - name: Publish Lambda layer
-        run: |
-          LAYER_VERSION=$(aws lambda publish-layer-version --layer-name reqs --content S3Bucket=${{ secrets.S3_BUCKET }},S3Key=reqs.zip --compatible-runtimes python3.10 --query LayerVersionArn --output text)
-          echo "LAYER_VERSION=$LAYER_VERSION" >> $GITHUB_ENV
-
-      - name: Update Lambda function with new layer
-        run: |
-          aws lambda update-function-configuration --function-name whatsapp-api --layers ${{ env.LAYER_VERSION }}
-
-      - name: Upload Lambda function to S3
+      - name: Upload to S3
         run: |
           aws s3 cp lambda_function.zip s3://${{ secrets.S3_BUCKET }}/lambda_function.zip
 
-      - name: Update Lambda function code
+      - name: Update Lambda function
         run: |
           aws lambda update-function-code --function-name whatsapp-api --s3-bucket ${{ secrets.S3_BUCKET }} --s3-key lambda_function.zip
