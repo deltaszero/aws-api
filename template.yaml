@@ -4,11 +4,13 @@ Resources:
   MyFlaskApi:
     Type: 'AWS::Serverless::Function'
     Properties:
-      Handler: wsgi.handler
+      Handler: lambda_function.handler
       Runtime: python3.10
       CodeUri: .
       MemorySize: 128
       Timeout: 15
+      Layers:
+        - !Ref ReqsLayer
       Policies:
         - AWSLambdaBasicExecutionRole
       Environment:
@@ -20,8 +22,12 @@ Resources:
           Properties:
             Path: /
             Method: ANY
-        ApiRoot:
-          Type: Api
-          Properties:
-            Path: /{proxy+}
-            Method: ANY
+
+  ReqsLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: reqs
+      ContentUri: reqs/
+      CompatibleRuntimes:
+        - python3.10
+      RetentionPolicy: Retain
