@@ -9,6 +9,3 @@ def index():
 @app.route('/version')
 def version():
     return jsonify({'version': '1.0.0', 'status': 200})
-
-if __name__ == '__main__':
-    app.run()
