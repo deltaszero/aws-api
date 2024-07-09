@@ -1,5 +1,5 @@
-from flask import Flask
 import awsgi
+from flask import Flask
 
 app = Flask(__name__)
 
@@ -7,5 +7,5 @@ app = Flask(__name__)
 def hello():
     return 'Hello, World!'
 
-def handler(event, context):
+def lambda_handler(event, context):
     return awsgi.response(app, event, context)
