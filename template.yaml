@@ -22,6 +22,11 @@ Resources:
           Properties:
             Path: /
             Method: ANY
+        ApiRoot:
+          Type: Api
+          Properties:
+            Path: /{proxy+}
+            Method: ANY
 
   ReqsLayer:
     Type: AWS::Serverless::LayerVersion

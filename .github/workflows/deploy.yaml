@@ -25,12 +25,12 @@ jobs:
       - name: Zip Lambda layer
         run: |
           cd reqs
-          zip -r ../reqs_layer.zip .
+          zip -r ../reqs.zip .
           cd ..
 
       - name: Zip Lambda function
         run: |
-          zip -r lambda_function.zip app lambda_function.py
+          zip -r lambda_function.zip app lambda_function.py requirements.txt
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
@@ -41,12 +41,16 @@ jobs:
 
       - name: Upload Lambda layer to S3
         run: |
-          aws s3 cp reqs_layer.zip s3://${{ secrets.S3_BUCKET }}/reqs_layer.zip
+          aws s3 cp reqs.zip s3://${{ secrets.S3_BUCKET }}/reqs.zip
 
       - name: Upload Lambda function to S3
         run: |
           aws s3 cp lambda_function.zip s3://${{ secrets.S3_BUCKET }}/lambda_function.zip
 
-      - name: Deploy SAM application
+      - name: Update Lambda function with new layer
         run: |
-          sam deploy --template-file template.yaml --stack-name MyFlaskApiStack --capabilities CAPABILITY_IAM --s3-bucket ${{ secrets.S3_BUCKET }}
+          aws lambda update-function-configuration --function-name whatsapp-api --layers $(aws lambda publish-layer-version --layer-name reqs --content S3Bucket=${{ secrets.S3_BUCKET }},S3Key=reqs.zip --compatible-runtimes python3.10 --query LayerVersionArn --output text)
+      
+      - name: Update Lambda function code
+        run: |
+          aws lambda update-function-code --function-name whatsapp-api --s3-bucket ${{ secrets.S3_BUCKET }} --s3-key lambda_function.zip
