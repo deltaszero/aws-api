@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "aws-api"
+version = "0.1.0"
+description = ""
+authors = ["dsthiago <thiagosd.2.18@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+requests = "^2.32.3"
+urllib3 = "^2.2.2"
+python-dotenv = "^1.0.1"
+flask = "^3.0.3"
+awscli = "^1.33.23"
+openai = "^1.35.10"
+aws-wsgi = "^0.2.7"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
