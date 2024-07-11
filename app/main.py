@@ -24,9 +24,6 @@ def verify():
         access_token = "CRISTIANORONALDO"
         token = request.args.get('hub.verify_token')
         challenge = request.args.get('hub.challenge')
-        print(f"Token: {token}")
-        print(f"Challenge: {challenge}")
-        print(f"Access Token: {access_token}")
         if (token is not None) and (token == access_token) and (challenge is not None):
             return challenge
         else:
@@ -47,9 +44,11 @@ def receive_message():
         text = utils.get_text_user(message)
         reply_message(text, number)
 
+        print("Message received: ", text)
+
         return "EVENT_RECEIVED"
     except Exception as e:
-        _ = e
+        print("An Error Occurred: ", str(e))
         return "EVENT_RECEIVED"
 
 def reply_message(text, number):
