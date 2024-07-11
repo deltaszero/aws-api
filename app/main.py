@@ -1,8 +1,11 @@
 from flask import Flask, jsonify, request, render_template
 import app.util.utils as utils
 import app.util.serving as serving
+import logging
 
 app = Flask(__name__)
+
+logger = logging.getLogger(__name__)
 
 @app.route('/')
 def index():
@@ -21,6 +24,9 @@ def verify():
         access_token = "CRISTIANORONALDO"
         token = request.args.get('hub.verify_token')
         challenge = request.args.get('hub.challenge')
+        logger.info(f"Token: {token}")
+        logger.info(f"Challenge: {challenge}")
+        logger.info(f"Access Token: {access_token}")
         if (token is not None) and (token == access_token) and (challenge is not None):
             return challenge
         else:
