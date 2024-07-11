@@ -45,5 +45,5 @@ def send_message(text_user, number_user):
         else:
             return False
     except Exception as e:
-        _ = e
+        print(f"An Error Occurred: {str(e)} @ send_message")
         return False
