@@ -1,5 +1,4 @@
-import awsgi
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request, render_template
 
 app = Flask(__name__)
 
@@ -10,6 +9,3 @@ def index():
 @app.route('/version')
 def version():
     return jsonify({'version': '1.0.0', 'status': 200})
-
-def lambda_handler(event, context):
-    return awsgi.response(app, event, context)
