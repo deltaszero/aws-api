@@ -24,9 +24,9 @@ def verify():
         access_token = "CRISTIANORONALDO"
         token = request.args.get('hub.verify_token')
         challenge = request.args.get('hub.challenge')
-        logger.info(f"Token: {token}")
-        logger.info(f"Challenge: {challenge}")
-        logger.info(f"Access Token: {access_token}")
+        print(f"Token: {token}")
+        print(f"Challenge: {challenge}")
+        print(f"Access Token: {access_token}")
         if (token is not None) and (token == access_token) and (challenge is not None):
             return challenge
         else:
