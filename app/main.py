@@ -18,9 +18,10 @@ def verify():
     According to documentation, it needs to get hub.verify_token and hub.challenge
     """
     try:
+        access_token = "CRISTIANORONALDO"
         token = request.args.get('hub.verify_token')
         challenge = request.args.get('hub.challenge')
-        if (token is not None) and (token == 'my_token') and (challenge is not None):
+        if (token is not None) and (token == access_token) and (challenge is not None):
             return challenge
         else:
             return "Invalid Request or Verification Token", 400
