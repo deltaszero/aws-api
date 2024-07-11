@@ -1,2 +1,8 @@
+requests
+urllib3
+python-dotenv
 Flask
+awscli
+openai
 aws-wsgi
+boto3
