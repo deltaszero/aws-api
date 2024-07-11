@@ -3,6 +3,6 @@
 ```sh
 pip install --platform manylinux1_x86_64 --target ./reqs --implementation cp --python-version 3.10 --only-binary=:all: --upgrade Flask aws-wsgi
 
-mkdir reqs; pip install -r requirements.txt -t reqs; rm reqs.zip; zip -qr reqs.zip reqs
+rm rf python; mkdir python; pip install -r requirements.txt -t python; rm python.zip; zip -qr python.zip python
 ```
 

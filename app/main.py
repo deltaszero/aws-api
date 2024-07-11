@@ -1,26 +1,6 @@
-import boto3
-import json
-from botocore.exceptions import ClientError
 from flask import Flask, jsonify, request, render_template
-
-
-def get_secret():
-    secret_name = "whatsapp_api_secrets"
-    region_name = "sa-east-1"
-    session = boto3.session.Session()
-    client = session.client(
-        service_name='secretsmanager',
-        region_name=region_name
-    )
-    try:
-        get_secret_value_response = client.get_secret_value(
-            SecretId=secret_name
-        )
-    except ClientError as _error_:
-        raise _error_
-    secret = get_secret_value_response['SecretString']
-    return json.loads(secret)
-
+import utils
+import serving
 
 app = Flask(__name__)
 
@@ -31,3 +11,43 @@ def index():
 @app.route('/version')
 def version():
     return jsonify({'version': '1.0.0', 'status': 200})
+
+@app.route('/whatsapp', methods=['GET'])
+def verify():
+    """
+    According to documentation, it needs to get hub.verify_token and hub.challenge
+    """
+    try:
+        token = request.args.get('hub.verify_token')
+        challenge = request.args.get('hub.challenge')
+        if (token is not None) and (token == 'my_token') and (challenge is not None):
+            return challenge
+        else:
+            return "Invalid Request or Verification Token", 400
+    except Exception as e:
+        return "An Error Occurred: " + str(e), 400
+
+@app.route('/whatsapp', methods=['POST'])
+def receive_message():
+    try:
+        data = request.get_json()
+        entry = (data['entry'])[0]
+        changes = (entry['changes'])[0]
+        value = changes['value']
+        message = (value['message'])[0]
+        number = message['from']
+        
+        text = utils.get_text_user(message)
+        reply_message(text, number)
+
+        return "EVENT_RECEIVED"
+    except Exception as e:
+        _ = e
+        return "EVENT_RECEIVED"
+
+def reply_message(text, number):
+    try:
+        serving.send_message(text, number)
+        return "Message sent successfully"
+    except Exception as e:
+        return "An Error Occurred: " + str(e)
