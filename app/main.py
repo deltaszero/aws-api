@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, render_template
+from flask import Flask, jsonify, request
 import app.util.utils as utils
 import app.util.serving as serving
 import logging
@@ -38,17 +38,18 @@ def receive_message():
         entry = (data['entry'])[0]
         changes = (entry['changes'])[0]
         value = changes['value']
-        message = (value['message'])[0]
+        message = (value['messages'])[0]
         number = message['from']
         
         text = utils.get_text_user(message)
         reply_message(text, number)
 
-        print("Message received: ", text)
+        print("Text: ", text)
 
         return "EVENT_RECEIVED"
     except Exception as e:
-        print("An Error Occurred: ", str(e))
+        print(f"An Error Occurred: {str(e)} @ receive_message")
+        print("Data: ", data)
         return "EVENT_RECEIVED"
 
 def reply_message(text, number):
