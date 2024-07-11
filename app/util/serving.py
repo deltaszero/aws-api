@@ -34,7 +34,7 @@ def gpt_response(text):
                 {"role": "user", "content": text},
             ]
         )
-        return chat_completion.choices[0].message
+        return str(chat_completion.choices[0].message.content)
     except Exception as e:
         print(f"An Error Occurred: {str(e)} @ gpt_response")
         return "An Error Occurred"
