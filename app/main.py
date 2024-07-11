@@ -42,9 +42,7 @@ def receive_message():
         number = message['from']
         
         text = utils.get_text_user(message)
-        reply_message(text, number)
-
-        print("Text: ", text)
+        reply_message(serving.gpt_response(text), number)
 
         return "EVENT_RECEIVED"
     except Exception as e:

@@ -1,6 +1,7 @@
 import requests
 import json
 import boto3
+import openai
 from botocore.exceptions import ClientError
 
 def get_secret():
@@ -19,6 +20,21 @@ def get_secret():
         raise _error_
     secret = get_secret_value_response['SecretString']
     return json.loads(secret)
+
+
+def gpt_response(text):
+    try:
+        openai.api_key = get_secret()['OPENAI_API_KEY']
+        result = openai.Completion.create(
+            engine="davinci",
+            prompt=text,
+            n=1,
+            max_tokens=100
+        )
+        return result.choices[0].text
+    except Exception as e:
+        print(f"An Error Occurred: {str(e)} @ gpt_response")
+        return "An Error Occurred"
 
 
 def send_message(text_user, number_user):
